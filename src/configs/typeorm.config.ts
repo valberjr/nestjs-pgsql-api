@@ -11,7 +11,7 @@ export const typeOrmConfig: TypeOrmModuleOptions = {
   synchronize: true,
   entities: [
     // Wildcard Path : Not working
-    // Specify the entities directly.
+    // Specify the entities directly
     User,
   ],
 };
