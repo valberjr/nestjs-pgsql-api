@@ -8,6 +8,7 @@ import {
 import {
   Body,
   Param,
+  Query,
 } from '@nestjs/common/decorators/http/route-params.decorator';
 import { ValidationPipe } from '@nestjs/common/pipes';
 import { AuthGuard } from '@nestjs/passport';
@@ -15,7 +16,9 @@ import { UpdateUserDto } from 'src/auth/dto/update-users.dto';
 import { GetUser } from 'src/auth/get-user.decorator';
 import { Role } from 'src/auth/role.decorator';
 import { RolesGuard } from 'src/auth/roles.guard';
+
 import { CreateUserDto } from './dto/create-user.dto';
+import { FindUsersQueryDto } from './dto/find-users-query.dto';
 import { ReturnUserDto } from './dto/return-user.dto';
 import { UserRole } from './user-role';
 import { User } from './user.entity';
@@ -68,6 +71,16 @@ export class UsersController {
     await this.userService.deleteUser(id);
     return {
       message: 'user deleted successfully',
+    };
+  }
+
+  @Get()
+  @Role(UserRole.ADMIN)
+  async findUsers(@Query() query: FindUsersQueryDto) {
+    const found = await this.userService.findUsers(query);
+    return {
+      found,
+      message: 'users found',
     };
   }
 }

@@ -6,6 +6,7 @@ import {
 import { UnprocessableEntityException } from '@nestjs/common/exceptions/unprocessable-entity.exception';
 import { UpdateUserDto } from 'src/auth/dto/update-users.dto';
 import { CreateUserDto } from './dto/create-user.dto';
+import { FindUsersQueryDto } from './dto/find-users-query.dto';
 import { UserRole } from './user-role';
 import { User } from './user.entity';
 import { UserRepository } from './users.repository';
@@ -58,5 +59,12 @@ export class UsersService {
     if (result.affected === 0) {
       throw new NotFoundException('user not found');
     }
+  }
+
+  async findUsers(
+    queryDto: FindUsersQueryDto,
+  ): Promise<{ users: User[]; total: number }> {
+    const users = await this.userRepository.findUsers(queryDto);
+    return users;
   }
 }
