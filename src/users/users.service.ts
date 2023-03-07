@@ -1,5 +1,10 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { UnprocessableEntityException } from '@nestjs/common/exceptions/unprocessable-entity.exception';
+import { UpdateUserDto } from 'src/auth/dto/update-users.dto';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UserRole } from './user-role';
 import { User } from './user.entity';
@@ -29,5 +34,22 @@ export class UsersService {
     }
 
     return user;
+  }
+
+  async updateUser(updateUserDto: UpdateUserDto, id: string): Promise<User> {
+    const user = await this.findUserById(id);
+    const { name, email, role, status } = updateUserDto;
+
+    user.name = name ? name : user.name;
+    user.email = email ? email : user.email;
+    user.role = role ? role : user.role;
+    user.status = status === undefined ? user.status : status;
+
+    try {
+      await user.save();
+      return user;
+    } catch (error) {
+      throw new InternalServerErrorException('error saving user on database');
+    }
   }
 }
