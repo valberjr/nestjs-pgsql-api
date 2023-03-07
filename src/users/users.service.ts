@@ -52,4 +52,11 @@ export class UsersService {
       throw new InternalServerErrorException('error saving user on database');
     }
   }
+
+  async deleteUser(userId: string) {
+    const result = await this.userRepository.delete({ id: userId });
+    if (result.affected === 0) {
+      throw new NotFoundException('user not found');
+    }
+  }
 }

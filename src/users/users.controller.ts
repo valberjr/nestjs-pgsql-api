@@ -1,5 +1,6 @@
 import { Controller, ForbiddenException, UseGuards } from '@nestjs/common';
 import {
+  Delete,
   Get,
   Patch,
   Post,
@@ -59,5 +60,14 @@ export class UsersController {
       );
     }
     return this.userService.updateUser(updateUserDto, id);
+  }
+
+  @Delete(':id')
+  @Role(UserRole.ADMIN)
+  async deleteUser(@Param('id') id: string) {
+    await this.userService.deleteUser(id);
+    return {
+      message: 'user deleted successfully',
+    };
   }
 }
