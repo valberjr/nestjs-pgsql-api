@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { UnprocessableEntityException } from '@nestjs/common/exceptions/unprocessable-entity.exception';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UserRole } from './user-role';
@@ -14,5 +14,20 @@ export class UsersService {
       throw new UnprocessableEntityException('not the same password');
     }
     return this.userRepository.createUser(createUserDto, UserRole.ADMIN);
+  }
+
+  async findUserById(userId: string): Promise<User> {
+    const user = await this.userRepository.findOne({
+      where: {
+        id: userId,
+      },
+      select: ['email', 'name', 'role', 'id'],
+    });
+
+    if (!user) {
+      throw new NotFoundException('user not found');
+    }
+
+    return user;
   }
 }

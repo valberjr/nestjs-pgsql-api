@@ -1,6 +1,12 @@
 import { Controller, UseGuards } from '@nestjs/common';
-import { Post } from '@nestjs/common/decorators/http/request-mapping.decorator';
-import { Body } from '@nestjs/common/decorators/http/route-params.decorator';
+import {
+  Get,
+  Post,
+} from '@nestjs/common/decorators/http/request-mapping.decorator';
+import {
+  Body,
+  Param,
+} from '@nestjs/common/decorators/http/route-params.decorator';
 import { ValidationPipe } from '@nestjs/common/pipes';
 import { AuthGuard } from '@nestjs/passport';
 import { Role } from 'src/auth/role.decorator';
@@ -11,12 +17,12 @@ import { UserRole } from './user-role';
 import { UsersService } from './users.service';
 
 @Controller('users')
+@UseGuards(AuthGuard('jwt'), RolesGuard)
 export class UsersController {
   constructor(private userService: UsersService) {}
 
   @Post()
   @Role(UserRole.ADMIN)
-  @UseGuards(AuthGuard('jwt'), RolesGuard)
   async createAdminUser(
     @Body(ValidationPipe) createUserDto: CreateUserDto,
   ): Promise<ReturnUserDto> {
@@ -24,6 +30,16 @@ export class UsersController {
     return {
       user,
       message: 'admin created successfully',
+    };
+  }
+
+  @Get(':id')
+  @Role(UserRole.ADMIN)
+  async findUserBydId(@Param('id') id): Promise<ReturnUserDto> {
+    const user = await this.userService.findUserById(id);
+    return {
+      user,
+      message: 'user found',
     };
   }
 }
