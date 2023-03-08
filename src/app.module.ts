@@ -7,11 +7,14 @@ import { winstonConfig } from './configs/winston.config';
 import { WinstonModule } from 'nest-winston';
 import { LoggerInterceptor } from './interceptors/logger.interceptor';
 import { APP_INTERCEPTOR } from '@nestjs/core';
+import { mailerConfig } from './configs/mailer.config';
+import { MailerModule } from '@nestjs-modules/mailer';
 
 @Module({
   imports: [
     TypeOrmModule.forRoot(typeOrmConfig),
     WinstonModule.forRoot(winstonConfig),
+    MailerModule.forRoot(mailerConfig),
     UsersModule,
     AuthModule,
   ],
